@@ -57,8 +57,14 @@ jobs:
               scripts/bundle-macos.sh --release
               cargo build --release -p sn-cli
               cp -R target/release/SigNexora.app target/release/sn-cli "$stage/"
-              archive="dist/signexora-${tag}-macos-$(uname -m).zip"
-              ditto -c -k "$stage" "$archive"
+              archive="dist/signexora-${tag}-macos-$(uname -m).dmg"
+              # The app icon is signexora.icns in the bundle. UDZO is the
+              # compressed disk image Finder opens.
+              if diskutil image create from --help >/dev/null 2>&1; then
+                diskutil image create from --format UDZO --volumeName SigNexora "$stage" "$archive"
+              else
+                hdiutil create -volname "SigNexora" -srcfolder "$stage" -ov -format UDZO "$archive"
+              fi
               ;;
             MINGW*|MSYS*|CYGWIN*)
               cargo build --release -p sn-gui -p sn-cli

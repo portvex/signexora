@@ -61,11 +61,11 @@ cargo run -p sn-cli -- replay s.json                               # rebuild eve
 cargo run -p sn-cli -- session-report s.json --html r.html --md r.md   # analysis report
 ```
 
-On macOS, `scripts/bundle-macos.sh` creates `target/debug/SigNexora.app` with the app name and icon for Finder and the Dock. Add `--release` to create `target/release/SigNexora.app`. The Dock icon also works with `cargo run`. These local bundles are ad-hoc signed, not notarized for distribution.
+On macOS, `scripts/bundle-macos.sh` creates `target/release/SigNexora.app` with the app name and icon for Finder and the Dock. The Dock icon also works with `cargo run`. These local bundles are ad-hoc signed, not notarized for distribution.
 
 Logo and platform icon assets are in [`crates/sn-gui/assets/branding`](crates/sn-gui/assets/branding). Run `scripts/icons.sh` on macOS to regenerate the icon exports from the PNG master.
 
-Push a tag named `v` plus the workspace version in `Cargo.toml` (`v0.1.0`) to publish a GitHub release. That tag builds `signexora` and `sn-cli` for Linux, macOS, and Windows and attaches the archives to the tag. The macOS archive contains `SigNexora.app` (ad-hoc signed, as with `scripts/bundle-macos.sh --release`) and `sn-cli`.
+Push a tag named `v` plus the workspace version in `Cargo.toml` (`v0.1.0`) to publish a GitHub release. That tag builds `signexora` and `sn-cli` for Linux, macOS, and Windows and attaches the archives to the tag. The macOS archive is a disk image, `signexora-<tag>-macos-<arch>.dmg`, containing `SigNexora.app` and `sn-cli`. The app icon is `signexora.icns` inside the bundle (`CFBundleIconFile`). The app is the release build from `scripts/bundle-macos.sh`, ad-hoc signed.
 
 A generator spec is JSON with a `"kind"` (`tones`, `noise`, `fsk`, `linear`, `c4fm`, `ofdm`), the fields of that kind and a `common` block (label, sample rate, length in seconds or symbols, seed, centre frequency and the channel). `--print-spec` with `--kind`, `--preset` or `--spec` prints one to start from, and `--seed N` replaces the seed:
 

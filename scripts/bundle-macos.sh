@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Build a Finder-launchable app with the SigNexora name and icon.
-# Usage: scripts/bundle-macos.sh [--release]
+# Build the release Finder app: <target>/release/SigNexora.app
+# Usage: scripts/bundle-macos.sh
+# `--release` is accepted so older commands keep working. There is no debug bundle.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -8,23 +9,18 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "This script builds a macOS application bundle." >&2
   exit 1
 fi
-profile=debug
-build_args=(-p sn-gui)
-if [[ "${1:-}" == "--release" && "$#" == 1 ]]; then
-  profile=release
-  build_args+=(--release)
-elif [[ "$#" != 0 ]]; then
-  echo "Usage: scripts/bundle-macos.sh [--release]" >&2
+if [[ "$#" -gt 1 || ( "$#" == 1 && "$1" != "--release" ) ]]; then
+  echo "Usage: scripts/bundle-macos.sh" >&2
   exit 1
 fi
-cargo build "${build_args[@]}"
+cargo build --release -p sn-gui
 target_dir="$(cargo metadata --no-deps --format-version 1 | python3 -c 'import json, sys; print(json.load(sys.stdin)["target_directory"])')"
 package_id="$(cargo pkgid -p sn-gui)"
 version="${package_id##*#}"
 version="${version##*@}"
-bundle="$target_dir/$profile/SigNexora.app"
+bundle="$target_dir/release/SigNexora.app"
 mkdir -p "$bundle/Contents/MacOS" "$bundle/Contents/Resources"
-cp "$target_dir/$profile/signexora" "$bundle/Contents/MacOS/signexora"
+cp "$target_dir/release/signexora" "$bundle/Contents/MacOS/signexora"
 cp crates/sn-gui/assets/branding/signexora.icns "$bundle/Contents/Resources/signexora.icns"
 cat > "$bundle/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -34,7 +30,7 @@ cat > "$bundle/Contents/Info.plist" <<PLIST
   <key>CFBundleDisplayName</key><string>SigNexora</string>
   <key>CFBundleIdentifier</key><string>app.signexora.desktop</string>
   <key>CFBundleExecutable</key><string>signexora</string>
-  <key>CFBundleIconFile</key><string>signexora.icns</string>
+  <key>CFBundleIconFile</key><string>signexora</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$version</string>
   <key>CFBundleVersion</key><string>$version</string>
