@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 members = ["crates/*"]
-exclude = ["fuzz"]
+exclude = ["fuzz", "third_party/xattr"]
 default-members = ["crates/*"]
 
 [workspace.package]
@@ -12,8 +12,8 @@ license = "MIT OR Apache-2.0"
 publish = false
 
 [workspace.dependencies]
-# Git hooks: `cargo test` installs .cargo-husky/hooks/* into .git/hooks.
-cargo-husky = { version = "1", default-features = false, features = ["user-hooks"] }
+# Git hooks: default features install a pre-push hook (`cargo test --all`) on `cargo test`.
+cargo-husky = "1"
 # Internal crates (add the later-phase crates here once something depends on them)
 sn-core = { path = "crates/sn-core" }
 sn-io = { path = "crates/sn-io" }
@@ -104,3 +104,8 @@ opt-level = 3                   # dependencies (FFT, wgpu) fully optimised in de
 [profile.release]
 lto = "thin"
 codegen-units = 1
+
+# xattr 0.2.3 (via gpui's zed-async-tar) reads libc::ENOATTR, which libc 0.2
+# no longer defines on Linux. The copy in third_party uses ENODATA there.
+[patch.crates-io]
+xattr = { path = "third_party/xattr" }

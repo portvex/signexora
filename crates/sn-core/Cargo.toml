@@ -15,7 +15,7 @@ serde_json.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]
-# Installs the repository's git hooks on the first `cargo test` (see .cargo-husky/).
+# Installs the default pre-push hook (`cargo test --all`) on the first `cargo test`.
 cargo-husky.workspace = true
 
 [lints]

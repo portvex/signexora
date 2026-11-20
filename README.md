@@ -103,9 +103,8 @@ scripts/fuzz.sh          # libFuzzer, 60 s per target (needs nightly + cargo-fuz
 scripts/fuzz.sh edit 600 # one target for 600 s
 ```
 
-Git hooks come from cargo-husky: the first `cargo test` installs `.cargo-husky/hooks/` into
-`.git/hooks`. `pre-commit` runs the format check and clippy; `pre-push` runs `scripts/check.sh`
-and `scripts/deps.sh`. Install the tools once with
+Git hooks come from cargo-husky with its default features. The first `cargo test` installs
+a `pre-push` hook that runs `cargo test --all`. Install the tools once with
 `cargo install --locked cargo-audit cargo-deny cargo-fuzz` and `rustup toolchain install nightly`.
 
 Benchmarks: `sn-io`, `sn-dsp`, `sn-analysis`, `sn-demod` and `sn-ofdm` each have a

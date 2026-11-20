@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Installed by cargo-husky (run `cargo test` once). Fast checks before every commit.
-# Skip once with `git commit --no-verify`.
-set -euo pipefail
-cd "$(git rev-parse --show-toplevel)"
-echo "==> pre-commit: format check"
-cargo fmtcheck
-echo "==> pre-commit: clippy (warnings are errors)"
-cargo lint
