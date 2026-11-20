@@ -1,0 +1,26 @@
+[package]
+name = "sn-session"
+description = "Saved sessions, operation log, replay and analysis report export."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+sn-analysis.workspace = true
+sn-core.workspace = true
+sn-dsp.workspace = true
+sn-io.workspace = true
+sn-synth.workspace = true
+serde.workspace = true
+# Exact float parsing (`float_roundtrip`, enabled in the workspace dependency): saved
+# generator specs must replay to the same samples.
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

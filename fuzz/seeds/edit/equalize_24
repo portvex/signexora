@@ -1,0 +1,1 @@
+{"op": "equalize", "carrier": 1000, "baud": 250, "mode": {"mode": "xn", "n": 4}, "blocks": 1}

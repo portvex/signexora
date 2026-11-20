@@ -1,0 +1,7 @@
+[alias]
+# cargo fmtcheck  - fail if any file is not formatted
+fmtcheck = "fmt --all -- --check"
+# cargo lint      - clippy over every crate and target, warnings are errors
+lint = "clippy --workspace --all-targets --all-features -- -D warnings"
+# cargo lintfix   - apply clippy's machine-applicable suggestions
+lintfix = "clippy --workspace --all-targets --all-features --fix --allow-dirty --allow-staged"

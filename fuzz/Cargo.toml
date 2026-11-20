@@ -1,0 +1,62 @@
+[package]
+name = "sn-fuzz"
+version = "0.0.0"
+edition = "2024"
+publish = false
+license = "MIT OR Apache-2.0"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+num-complex = "0.4"
+serde_json = "1"
+sn-core = { path = "../crates/sn-core" }
+sn-io = { path = "../crates/sn-io" }
+sn-dsp = { path = "../crates/sn-dsp" }
+sn-ofdm = { path = "../crates/sn-ofdm" }
+sn-session = { path = "../crates/sn-session" }
+
+# A workspace of its own: fuzzing needs nightly and sanitizer flags, which must
+# not leak into the main workspace.
+[workspace]
+members = ["."]
+
+[profile.release]
+debug = 1
+
+[[bin]]
+name = "open_file"
+path = "fuzz_targets/open_file.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "sigmf"
+path = "fuzz_targets/sigmf.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "session_json"
+path = "fuzz_targets/session_json.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "edit"
+path = "fuzz_targets/edit.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "ofdm"
+path = "fuzz_targets/ofdm.rs"
+test = false
+doc = false
+bench = false

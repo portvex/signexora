@@ -1,0 +1,26 @@
+[package]
+name = "sn-analysis"
+description = "Measurements for SigNexora: precise line frequency, automatic baud estimation, histograms, tone grids, raster."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+rayon.workspace = true
+sn-core.workspace = true
+sn-dsp.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+sn-synth.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true
+
+[[bench]]
+name = "perf"
+harness = false

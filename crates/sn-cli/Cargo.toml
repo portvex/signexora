@@ -1,0 +1,32 @@
+[package]
+name = "sn-cli"
+description = "Headless SigNexora tool: synthesise test signals, inspect files, run pipelines (later phases)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "sn-cli"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+sn-analysis.workspace = true
+sn-core.workspace = true
+sn-demod.workspace = true
+sn-dsp.workspace = true
+sn-io.workspace = true
+sn-ofdm.workspace = true
+sn-script.workspace = true
+sn-session.workspace = true
+sn-synth.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+
+[lints]
+workspace = true

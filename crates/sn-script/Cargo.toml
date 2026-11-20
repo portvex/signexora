@@ -1,0 +1,25 @@
+[package]
+name = "sn-script"
+description = "Rhai scripting bindings over the operation API."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+rhai.workspace = true
+sn-analysis.workspace = true
+sn-core.workspace = true
+sn-dsp.workspace = true
+sn-io.workspace = true
+sn-session.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+sn-synth.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,106 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+exclude = ["fuzz"]
+default-members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.95"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[workspace.dependencies]
+# Git hooks: `cargo test` installs .cargo-husky/hooks/* into .git/hooks.
+cargo-husky = { version = "1", default-features = false, features = ["user-hooks"] }
+# Internal crates (add the later-phase crates here once something depends on them)
+sn-core = { path = "crates/sn-core" }
+sn-io = { path = "crates/sn-io" }
+sn-synth = { path = "crates/sn-synth" }
+sn-dsp = { path = "crates/sn-dsp" }
+sn-analysis = { path = "crates/sn-analysis" }
+sn-demod = { path = "crates/sn-demod" }
+sn-session = { path = "crates/sn-session" }
+sn-script = { path = "crates/sn-script" }
+sn-ofdm = { path = "crates/sn-ofdm" }
+sn-ui-core = { path = "crates/sn-ui-core" }
+
+# External crates
+anyhow = "1"
+# The local UTC offset for file dates (the loader's Date and Time columns).
+jiff = { version = "0.2", default-features = false, features = ["std", "tz-system", "tzdb-zoneinfo", "tzdb-bundle-platform"] }
+clap = { version = "4.6", features = ["derive"] }
+fluent-bundle = "0.16"
+# GPUI (Zed): the Windows 95 front end (sn-gui). `runtime_shaders` compiles the
+# Metal shaders at run time, so macOS builds need no Xcode `metal` tool.
+gpui = { version = "0.2.2", features = ["runtime_shaders"] }
+hound = "3.5"
+memmap2 = "0.9"
+rayon = "1.12"
+rhai = { version = "1.27", features = ["serde"] }
+rodio = { version = "0.23", default-features = false, features = ["playback"] }
+rustfft = "6.4"
+sys-locale = "0.3"
+symphonia = { version = "0.6", default-features = false, features = ["mp3", "flac", "ogg", "vorbis", "pcm", "wav", "adpcm"] }
+num-complex = "0.4"
+serde = { version = "1", features = ["derive"] }
+# Exact float parsing: saved generator specs (sn-session) must replay to the same samples.
+serde_json = { version = "1", features = ["float_roundtrip"] }
+tempfile = "3"
+thiserror = "2"
+unic-langid = "0.9"
+
+# ---------------------------------------------------------------------------
+# Lints. Every crate opts in with `[lints] workspace = true`.
+# CI runs `cargo clippy --workspace --all-targets -- -D warnings`, so every
+# warning below fails the build.
+# ---------------------------------------------------------------------------
+[workspace.lints.rust]
+unsafe_code = "deny"            # crates that need it (mmap) allow it locally with a SAFETY note
+missing_debug_implementations = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+unreachable_pub = "warn"
+unused_qualifications = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# No panics in production code: every error must be handled (project rule).
+# Tests are exempt through clippy.toml (allow-*-in-tests).
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+unreachable = "deny"
+todo = "deny"
+unimplemented = "deny"
+indexing_slicing = "deny"
+unwrap_in_result = "deny"
+panic_in_result_fn = "deny"
+get_unwrap = "deny"
+string_slice = "deny"
+exit = "deny"
+# Other restriction lints we want
+dbg_macro = "warn"
+float_cmp = "warn"
+# Pedantic lints that fight normal DSP code
+cast_possible_truncation = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+cast_sign_loss = "allow"
+many_single_char_names = "allow"
+similar_names = "allow"
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+
+[profile.dev]
+opt-level = 1                   # DSP code is unusably slow at opt-level 0
+
+[profile.dev.package."*"]
+opt-level = 3                   # dependencies (FFT, wgpu) fully optimised in dev
+
+[profile.release]
+lto = "thin"
+codegen-units = 1

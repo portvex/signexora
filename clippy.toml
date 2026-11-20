@@ -1,0 +1,10 @@
+msrv = "1.95"
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+allow-indexing-slicing-in-tests = true
+allow-dbg-in-tests = true
+# DSP kernels legitimately take many parameters (rates, lengths, gains).
+too-many-arguments-threshold = 9
+# Domain terms used in docs that are names, not code. ".." keeps clippy's defaults.
+doc-valid-idents = ["PhasePlane", "MinBr", "MaxBr", "SigMF", "SigNexora", "WinDrm", "OpenAsData", "SergUA6", "HRes", ".."]

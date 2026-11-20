@@ -1,0 +1,20 @@
+[package]
+name = "sn-synth"
+description = "Test-signal generator for SigNexora (the role SA's OCG played): tones, noise, FSK/GFSK/MSK, PSK/QAM with pulse shaping, C4FM, OFDM models A/B/C, channel impairments and the OFDM calculators."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+rustfft.workspace = true
+sn-core.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+serde_json.workspace = true
+
+[lints]
+workspace = true

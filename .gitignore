@@ -1,0 +1,7 @@
+.DS_Store
+/target
+*.wav
+!testdata/**/*.wav
+/.claude/worktrees/
+/.claude/settings.local.json
+__pycache__/

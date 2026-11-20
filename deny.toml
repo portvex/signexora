@@ -1,0 +1,70 @@
+# cargo deny configuration. Run with `cargo deny check` or `scripts/deps.sh`.
+# https://embarkstudios.github.io/cargo-deny/
+
+[graph]
+# Check every platform the app can be built for, not only the host.
+all-features = true
+
+[advisories]
+# Unmaintained crates pulled in transitively, with no maintained release to move
+# to yet. Review this list when gpui or rhai are upgraded. Each entry
+# is also in .cargo/audit.toml.
+ignore = [
+    { id = "RUSTSEC-2026-0249", reason = "smartstring: used by rhai (sn-script); no fix upstream yet" },
+    { id = "RUSTSEC-2026-0192", reason = "ttf-parser: used by gpui's font stack (fontdb, usvg); no fix upstream yet" },
+    { id = "RUSTSEC-2026-0370", reason = "zvariant: used by gpui's Linux desktop portal (ashpd, zbus); no fix upstream yet" },
+    { id = "RUSTSEC-2026-0371", reason = "zbus_names: used by gpui's Linux desktop portal (ashpd, zbus); no fix upstream yet" },
+    { id = "RUSTSEC-2026-0372", reason = "zvariant_derive: used by gpui's Linux desktop portal (ashpd, zbus); no fix upstream yet" },
+    # Unmaintained crates pulled in by gpui 0.2.2 (sn-gui). Informational notices,
+    # no known vulnerability; review when gpui is upgraded.
+    { id = "RUSTSEC-2024-0384", reason = "instant: unmaintained, used transitively by gpui; no known vulnerability" },
+    { id = "RUSTSEC-2026-0441", reason = "pin-utils: unmaintained, used transitively by gpui; no known vulnerability" },
+    { id = "RUSTSEC-2026-0206", reason = "rustybuzz: unmaintained, used by gpui's text stack (cosmic-text, Linux); no known vulnerability" },
+    { id = "RUSTSEC-2025-0052", reason = "async-std: discontinued, used transitively by gpui; no known vulnerability" },
+    { id = "RUSTSEC-2024-0436", reason = "paste: unmaintained, used transitively by gpui; no known vulnerability" },
+    { id = "RUSTSEC-2026-0173", reason = "proc-macro-error2: unmaintained, used by gpui's build-time macros; no known vulnerability" },
+    { id = "RUSTSEC-2025-0134", reason = "rustls-pemfile: unmaintained, used by gpui's HTTP client; no known vulnerability" },
+    # git2: only in test builds (gpui's test-support feature, sn-gui dev-dependency);
+    # the unsound APIs are never called.
+    { id = "RUSTSEC-2026-0183", reason = "git2 Remote::list unsound; test-only dependency via gpui test-support, API not used" },
+    { id = "RUSTSEC-2026-0184", reason = "git2 BlameHunk signature unsound; test-only dependency via gpui test-support, API not used" },
+]
+
+[licenses]
+# Permissive licences, plus MPL-2.0 (file-level copyleft: symphonia and a few
+# others; using them unmodified puts no obligation on our own code). The project
+# itself is MIT OR Apache-2.0. Add a licence here only after reading it.
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MPL-2.0",
+    # NCSA (University of Illinois/NCSA, permissive, BSD-like): libfuzzer-sys,
+    # pulled in by gpui's image decoding stack.
+    "NCSA",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.9
+
+[licenses.private]
+# Our own crates are publish = false; check their licence like any other.
+ignore = false
+
+[bans]
+# Several versions of one crate are common in a GUI dependency tree; report them
+# without failing. Wildcard version requirements are not allowed.
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []

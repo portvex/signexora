@@ -1,0 +1,117 @@
+{
+  "format": "sa-rs-session",
+  "version": 1,
+  "generator": "sa-rs 0.1.0",
+  "nodes": [
+    {
+      "id": 0,
+      "label": "x.wav",
+      "inputs": [],
+      "operation": {
+        "name": "load",
+        "params": {
+          "channels": null,
+          "path": "x.wav",
+          "raw": null,
+          "scaling": {
+            "clip": null,
+            "gain": 1.0
+          }
+        }
+      },
+      "signal": {
+        "sample_rate": 48000.0,
+        "len": 768000,
+        "kind": "Real",
+        "center_frequency": 0.0
+      },
+      "source": {
+        "container": "Wav",
+        "codec": "PCM",
+        "bytes": 1536044
+      },
+      "ui": {}
+    },
+    {
+      "id": 1,
+      "label": "band select 400.00-1300.00 Hz",
+      "inputs": [
+        0
+      ],
+      "operation": {
+        "name": "edit",
+        "params": {
+          "hi": 1300.0,
+          "lo": 400.0,
+          "op": "band_select"
+        }
+      },
+      "signal": {
+        "sample_rate": 48000.0,
+        "len": 768000,
+        "kind": "Real",
+        "center_frequency": 0.0
+      },
+      "ui": {}
+    },
+    {
+      "id": 2,
+      "label": "resample to 2000 Hz",
+      "inputs": [
+        1
+      ],
+      "operation": {
+        "name": "edit",
+        "params": {
+          "op": "resample",
+          "rate": 2000.0
+        }
+      },
+      "signal": {
+        "sample_rate": 2000.0,
+        "len": 32000,
+        "kind": "Real",
+        "center_frequency": 0.0
+      },
+      "ui": {
+        "adp_candidates": [
+          {
+            "baud": 299.9999574220606,
+            "detector": "Am",
+            "score": 26.535842895507812
+          },
+          {
+            "baud": 14.032559851669534,
+            "detector": "ModifiedAm",
+            "score": 13.736732482910156
+          },
+          {
+            "baud": 7.703587792530102,
+            "detector": "ModifiedAm",
+            "score": 13.657870292663574
+          },
+          {
+            "baud": 8.449504087486085,
+            "detector": "Am",
+            "score": 13.535823822021484
+          },
+          {
+            "baud": 16.050328388318647,
+            "detector": "Am",
+            "score": 13.19131088256836
+          }
+        ]
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "kind": "BaudRate",
+      "value": 299.9999574220606,
+      "uncertainty": null,
+      "source": 2,
+      "tool": "ADP (script)"
+    }
+  ],
+  "ui": {}
+}
