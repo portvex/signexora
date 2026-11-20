@@ -1,0 +1,109 @@
+name: Release
+
+# Pushing v<workspace version> (v0.1.0) builds signexora and sn-cli and
+# attaches the archives to a GitHub release for that tag.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+  LINUX_GUI_DEPS: >-
+    libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libxkbcommon-dev
+    libssl-dev libasound2-dev
+    libxkbcommon-x11-dev libx11-xcb-dev libxcb1-dev libwayland-dev
+    libfontconfig1-dev libfreetype-dev libvulkan-dev libzstd-dev
+
+jobs:
+  package:
+    name: Package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Linux GUI build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y $LINUX_GUI_DEPS
+      - uses: Swatinem/rust-cache@v2
+      - name: Build and archive
+        shell: bash
+        run: |
+          set -euo pipefail
+          ver=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\([^"]*\)"/\1/p' Cargo.toml)
+          tag="${GITHUB_REF_NAME}"
+          if [[ "$tag" != "v$ver" ]]; then
+            echo "Tag ${tag} must be v${ver}, the workspace version in Cargo.toml." >&2
+            exit 1
+          fi
+          stage="${RUNNER_TEMP}/signexora-stage"
+          mkdir -p "$stage" dist
+          os=$(uname -s)
+          case "$os" in
+            Linux)
+              cargo build --release -p sn-gui -p sn-cli
+              cp target/release/signexora target/release/sn-cli "$stage/"
+              archive="dist/signexora-${tag}-linux-$(uname -m).tar.gz"
+              tar -C "$stage" -czf "$archive" .
+              ;;
+            Darwin)
+              scripts/bundle-macos.sh --release
+              cargo build --release -p sn-cli
+              cp -R target/release/SigNexora.app target/release/sn-cli "$stage/"
+              archive="dist/signexora-${tag}-macos-$(uname -m).zip"
+              ditto -c -k "$stage" "$archive"
+              ;;
+            MINGW*|MSYS*|CYGWIN*)
+              cargo build --release -p sn-gui -p sn-cli
+              cp target/release/signexora.exe target/release/sn-cli.exe "$stage/"
+              archive="dist/signexora-${tag}-windows-$(uname -m).zip"
+              tar -C "$stage" -a -cf "$archive" .
+              ;;
+            *)
+              echo "Unsupported OS: $os" >&2
+              exit 1
+              ;;
+          esac
+          echo "Packed $archive"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: signexora-${{ runner.os }}-${{ runner.arch }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    name: Publish
+    needs: package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Create or update the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          shopt -s nullglob
+          files=(dist/*)
+          if (( ${#files[@]} == 0 )); then
+            echo "No release archives were downloaded." >&2
+            exit 1
+          fi
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" "${files[@]}" --clobber --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" "${files[@]}" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "SigNexora ${tag}" \
+              --generate-notes
+          fi

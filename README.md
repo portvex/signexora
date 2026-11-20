@@ -65,6 +65,8 @@ On macOS, `scripts/bundle-macos.sh` creates `target/debug/SigNexora.app` with th
 
 Logo and platform icon assets are in [`crates/sn-gui/assets/branding`](crates/sn-gui/assets/branding). Run `scripts/icons.sh` on macOS to regenerate the icon exports from the PNG master.
 
+Push a tag named `v` plus the workspace version in `Cargo.toml` (`v0.1.0`) to publish a GitHub release. That tag builds `signexora` and `sn-cli` for Linux, macOS, and Windows and attaches the archives to the tag. The macOS archive contains `SigNexora.app` (ad-hoc signed, as with `scripts/bundle-macos.sh --release`) and `sn-cli`.
+
 A generator spec is JSON with a `"kind"` (`tones`, `noise`, `fsk`, `linear`, `c4fm`, `ofdm`), the fields of that kind and a `common` block (label, sample rate, length in seconds or symbols, seed, centre frequency and the channel). `--print-spec` with `--kind`, `--preset` or `--spec` prints one to start from, and `--seed N` replaces the seed:
 
 ```
