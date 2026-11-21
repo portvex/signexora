@@ -83,7 +83,9 @@ fn channels_of(signal: &Signal) -> u16 {
 /// - an existing `path` is never left empty or half-written, because when `write`
 ///   fails or the save is cancelled the temporary file is removed and `path` is
 ///   untouched;
-/// - two saves at once never share a temporary file;
+/// - two saves at once never share a temporary file, and each one completes: on
+///   Windows a replace that loses the race with another save of the same path is
+///   retried;
 /// - a reader that still has the old file open keeps seeing the old data, since the
 ///   rename leaves it alive;
 /// - on Unix the saved file keeps the mode of the file it replaces (0644 for a new
@@ -123,8 +125,41 @@ pub fn write_atomically(path: &Path, write: impl FnOnce(&mut File) -> Result<()>
     let mut tmp = builder.tempfile_in(dir).map_err(io_err(dir))?;
     write(tmp.as_file_mut())?;
     tmp.as_file().sync_all().map_err(io_err(tmp.path()))?;
-    tmp.persist(path).map_err(|e| io_err(path)(e.error))?;
-    Ok(())
+    // Close the handle before the rename. Windows refuses to replace a file that
+    // is still open, so a second save of `path` would fail with access denied.
+    replace_temp(tmp.into_temp_path(), path)
+}
+
+/// Move `tmp` onto `path`. Windows `MoveFileEx` can return access denied while
+/// another save of the same path is still renaming, so those errors are retried.
+fn replace_temp(mut tmp: tempfile::TempPath, path: &Path) -> Result<()> {
+    let mut attempt = 0_u32;
+    loop {
+        match tmp.persist(path) {
+            Ok(()) => return Ok(()),
+            Err(err) => {
+                attempt += 1;
+                if attempt >= 20 || !windows_replace_busy(&err.error) {
+                    return Err(io_err(path)(err.error));
+                }
+                tmp = err.path;
+                std::thread::sleep(std::time::Duration::from_millis(u64::from(attempt)));
+            }
+        }
+    }
+}
+
+/// `ERROR_ACCESS_DENIED`, `ERROR_SHARING_VIOLATION` and `ERROR_LOCK_VIOLATION`.
+fn windows_replace_busy(err: &std::io::Error) -> bool {
+    #[cfg(windows)]
+    {
+        matches!(err.raw_os_error(), Some(5 | 32 | 33))
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = err;
+        false
+    }
 }
 
 /// Encode one sample. Non-finite values become silence in every format.
@@ -796,6 +831,26 @@ mod tests {
         let err = write_wav(&p, &s, WavFormat::Pcm16).unwrap_err();
         assert!(matches!(err, Error::Io { .. }));
         assert!(err.to_string().contains("no_such_dir"), "{err}");
+    }
+
+    #[test]
+    fn write_atomically_survives_saves_at_the_same_time() {
+        let dir = tempfile::tempdir().unwrap();
+        let p = dir.path().join("s.json");
+        std::fs::write(&p, b"old").unwrap();
+        std::thread::scope(|scope| {
+            for i in 0..8 {
+                let p = &p;
+                scope.spawn(move || {
+                    let body = format!("body {i}");
+                    write_atomically(p, |f| f.write_all(body.as_bytes()).map_err(io_err(p)))
+                        .unwrap();
+                });
+            }
+        });
+        let got = std::fs::read(&p).unwrap();
+        assert!(got.starts_with(b"body "), "{got:?}");
+        assert_eq!(only_file_in(dir.path()), ["s.json"]);
     }
 
     #[test]
