@@ -362,7 +362,7 @@ checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
 
 [[package]]
 name = "sn-analysis"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rayon",
  "serde",
@@ -373,7 +373,7 @@ dependencies = [
 
 [[package]]
 name = "sn-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "num-complex",
  "rayon",
@@ -384,7 +384,7 @@ dependencies = [
 
 [[package]]
 name = "sn-dsp"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rayon",
  "rustfft",
@@ -409,7 +409,7 @@ dependencies = [
 
 [[package]]
 name = "sn-io"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "hound",
  "memmap2",
@@ -423,7 +423,7 @@ dependencies = [
 
 [[package]]
 name = "sn-ofdm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "num-complex",
  "rayon",
@@ -436,7 +436,7 @@ dependencies = [
 
 [[package]]
 name = "sn-session"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -450,7 +450,7 @@ dependencies = [
 
 [[package]]
 name = "sn-synth"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rustfft",
  "serde",

@@ -5626,7 +5626,7 @@ checksum = "dd538fb6910ac1099850255cf94a94df6551fbdd602454387d0adb2d1ca6dead"
 
 [[package]]
 name = "sn-analysis"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rayon",
  "serde",
@@ -5639,7 +5639,7 @@ dependencies = [
 
 [[package]]
 name = "sn-cli"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "anyhow",
  "clap",
@@ -5658,7 +5658,7 @@ dependencies = [
 
 [[package]]
 name = "sn-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "cargo-husky",
  "num-complex",
@@ -5670,7 +5670,7 @@ dependencies = [
 
 [[package]]
 name = "sn-demod"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "sn-analysis",
@@ -5682,7 +5682,7 @@ dependencies = [
 
 [[package]]
 name = "sn-dsp"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rayon",
  "rustfft",
@@ -5695,7 +5695,7 @@ dependencies = [
 
 [[package]]
 name = "sn-gui"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "core-foundation 0.10.0",
  "core-graphics 0.24.0",
@@ -5721,7 +5721,7 @@ dependencies = [
 
 [[package]]
 name = "sn-io"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "hound",
  "memmap2",
@@ -5736,7 +5736,7 @@ dependencies = [
 
 [[package]]
 name = "sn-ofdm"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "num-complex",
  "rayon",
@@ -5750,7 +5750,7 @@ dependencies = [
 
 [[package]]
 name = "sn-script"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rhai",
  "serde_json",
@@ -5766,7 +5766,7 @@ dependencies = [
 
 [[package]]
 name = "sn-session"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "serde",
  "serde_json",
@@ -5781,7 +5781,7 @@ dependencies = [
 
 [[package]]
 name = "sn-synth"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "rustfft",
  "serde",
@@ -5792,7 +5792,7 @@ dependencies = [
 
 [[package]]
 name = "sn-ui-core"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "fluent-bundle",
  "jiff",

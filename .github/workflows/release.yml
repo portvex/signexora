@@ -1,6 +1,6 @@
 name: Release
 
-# Pushing v<workspace version> (v0.1.0) builds signexora and sn-cli and
+# Pushing v<workspace version> (v0.1.1) builds signexora and sn-cli and
 # attaches the archives to a GitHub release for that tag.
 on:
   push:
