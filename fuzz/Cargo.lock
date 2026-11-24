@@ -76,10 +76,26 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 
 [[package]]
+name = "errno"
+version = "0.3.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
+dependencies = [
+ "libc",
+ "windows-sys",
+]
+
+[[package]]
 name = "extended"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "af9673d8203fcb076b19dfd17e38b3d4ae9f44959416ea532ce72415a6020365"
+
+[[package]]
+name = "fastrand"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
 
 [[package]]
 name = "find-msvc-tools"
@@ -143,6 +159,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "linux-raw-sys"
+version = "0.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+
+[[package]]
 name = "log"
 version = "0.4.35"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -190,6 +212,12 @@ checksum = "071dfc062690e90b734c0b2273ce72ad0ffa95f0c74596bc250dcfd960262841"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.21.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
 name = "primal-check"
@@ -265,96 +293,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "sn-analysis"
-version = "0.1.0"
+name = "rustix"
+version = "1.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e5e76742e5294153d4dde1207dbec5bdd81eef6fabdc0d2118babadabfd858aa"
 dependencies = [
- "sn-core",
- "sn-dsp",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "sn-core"
-version = "0.1.0"
-dependencies = [
- "num-complex",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "sn-dsp"
-version = "0.1.0"
-dependencies = [
- "rayon",
- "rustfft",
- "sn-core",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "sn-fuzz"
-version = "0.0.0"
-dependencies = [
- "libfuzzer-sys",
- "num-complex",
- "sn-core",
- "sn-dsp",
- "sn-io",
- "sn-ofdm",
- "sn-session",
- "serde_json",
-]
-
-[[package]]
-name = "sn-io"
-version = "0.1.0"
-dependencies = [
- "hound",
- "memmap2",
- "sn-core",
- "serde",
- "serde_json",
- "symphonia",
- "thiserror",
-]
-
-[[package]]
-name = "sn-ofdm"
-version = "0.1.0"
-dependencies = [
- "num-complex",
- "rayon",
- "rustfft",
- "sn-core",
- "sn-dsp",
- "serde",
- "thiserror",
-]
-
-[[package]]
-name = "sn-session"
-version = "0.1.0"
-dependencies = [
- "sn-analysis",
- "sn-core",
- "sn-dsp",
- "sn-io",
- "sn-synth",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "sn-synth"
-version = "0.1.0"
-dependencies = [
- "sn-core",
- "thiserror",
+ "bitflags",
+ "errno",
+ "libc",
+ "linux-raw-sys",
+ "windows-sys",
 ]
 
 [[package]]
@@ -411,6 +359,104 @@ name = "smallvec"
 version = "1.16.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
+
+[[package]]
+name = "sn-analysis"
+version = "0.1.0"
+dependencies = [
+ "rayon",
+ "serde",
+ "sn-core",
+ "sn-dsp",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-core"
+version = "0.1.0"
+dependencies = [
+ "num-complex",
+ "rayon",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-dsp"
+version = "0.1.0"
+dependencies = [
+ "rayon",
+ "rustfft",
+ "serde",
+ "sn-core",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-fuzz"
+version = "0.0.0"
+dependencies = [
+ "libfuzzer-sys",
+ "num-complex",
+ "serde_json",
+ "sn-core",
+ "sn-dsp",
+ "sn-io",
+ "sn-ofdm",
+ "sn-session",
+]
+
+[[package]]
+name = "sn-io"
+version = "0.1.0"
+dependencies = [
+ "hound",
+ "memmap2",
+ "serde",
+ "serde_json",
+ "sn-core",
+ "symphonia",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-ofdm"
+version = "0.1.0"
+dependencies = [
+ "num-complex",
+ "rayon",
+ "rustfft",
+ "serde",
+ "sn-core",
+ "sn-dsp",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-session"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "sn-analysis",
+ "sn-core",
+ "sn-dsp",
+ "sn-io",
+ "sn-synth",
+ "thiserror",
+]
+
+[[package]]
+name = "sn-synth"
+version = "0.1.0"
+dependencies = [
+ "rustfft",
+ "serde",
+ "sn-core",
+ "thiserror",
+]
 
 [[package]]
 name = "strength_reduce"
@@ -564,6 +610,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "tempfile"
+version = "3.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
+dependencies = [
+ "fastrand",
+ "getrandom",
+ "once_cell",
+ "rustix",
+ "windows-sys",
+]
+
+[[package]]
 name = "thiserror"
 version = "2.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -598,6 +657,21 @@ name = "unicode-ident"
 version = "1.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
+
+[[package]]
+name = "windows-link"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+
+[[package]]
+name = "windows-sys"
+version = "0.61.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae137229bcbd6cdf0f7b80a31df61766145077ddf49416a728b02cb3921ff3fc"
+dependencies = [
+ "windows-link",
+]
 
 [[package]]
 name = "zmij"
