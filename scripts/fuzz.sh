@@ -17,6 +17,12 @@ cd "$(dirname "$0")/../fuzz"
 nightly_bin="$(dirname "$(rustup which --toolchain nightly rustc)")"
 export PATH="$nightly_bin:$HOME/.cargo/bin:$PATH"
 
+# cargo-fuzz builds for the triple it was itself built for unless told
+# otherwise; a static (musl) cargo-fuzz, as CI installs, would pick musl,
+# where sanitizers cannot run. Always build for nightly rustc's host.
+host=$(rustc -vV | sed -n 's/^host: //p')
+[[ -n "$host" ]] || { echo "fuzz: cannot determine the nightly host triple" >&2; exit 1; }
+
 targets=(open_file sigmf session_json edit ofdm)
 if [[ "${1:-}" == "--list" ]]; then
   printf '%s\n' "${targets[@]}"
@@ -32,10 +38,10 @@ run() {
   fi
   echo "==> fuzz $target (${seconds} s)"
   if [[ $# -gt 0 ]]; then
-    cargo fuzz run "$target" "$@"
+    cargo fuzz run --target "$host" "$target" "$@"
   else
     # rss_limit_mb catches runaway allocations; -timeout catches hangs.
-    cargo fuzz run "$target" "corpus/$target" -- \
+    cargo fuzz run --target "$host" "$target" "corpus/$target" -- \
       -max_total_time="$seconds" -rss_limit_mb=2048 -timeout=20
   fi
 }
